@@ -125,17 +125,39 @@ Held-out DDL-X test split:
 
 Metric definitions:
 
-Let `P = {p_i}` be predicted boxes, `G = {g_j}` be ground-truth boxes, and `IoU(a,b) = |a ∩ b| / |a ∪ b|`.
+Let $P=\{p_i\}$ be the predicted boxes, $G=\{g_j\}$ be the ground-truth boxes, and:
+
+$$
+\mathrm{IoU}(a,b)=\frac{|a\cap b|}{|a\cup b|}
+$$
 
 - Union region IoU:
-  `IoU(union(P), union(G))`.
+
+$$
+\mathrm{UnionIoU}=\mathrm{IoU}\left(\bigcup_i p_i,\bigcup_j g_j\right)
+$$
+
 - Strict IoU:
-  `sum_(i,j in M) IoU(p_i, g_j) / max(|P|, |G|)`, where `M` is the Hungarian one-to-one
-  matching that maximizes total IoU.
+
+$$
+\mathrm{StrictIoU}=\frac{\sum_{(i,j)\in M}\mathrm{IoU}(p_i,g_j)}{\max(|P|,|G|)}
+$$
+
+where $M$ is the Hungarian one-to-one matching that maximizes total IoU.
+
 - Per-GT-box IoU:
-  `(1 / |G|) * sum_j max_i IoU(p_i, g_j)`.
+
+$$
+\mathrm{PerGTIoU}=\frac{1}{|G|}\sum_j \max_i \mathrm{IoU}(p_i,g_j)
+$$
+
 - Detection AUC:
-  `ROC_AUC(y, s)`, where `y` is the real/fake label and `s` is the predicted fake probability.
+
+$$
+\mathrm{DetectionAUC}=\mathrm{ROC\_AUC}(y,s)
+$$
+
+where $y$ is the real/fake label and $s$ is the predicted fake probability.
 
 ## Layout
 
