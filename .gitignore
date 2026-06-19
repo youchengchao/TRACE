@@ -1,0 +1,21 @@
+# Python environment / caches
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Run outputs
+logs/
+out/
+*.zip
+*_cache/
+*_summary.json
+predict_loc_summary.json
+
+# backbone_best.pt (1.2 GB) is distributed via Google Drive, not git (see ckpt/README.md).
+# trace_best.pt (6 MB) IS committed. Auto-downloaded Qwen weights are ignored.
+ckpt/backbone_best.pt
+ckpt/Qwen3-VL-8B-Instruct/
+# OS / editor
+.DS_Store
+*.log

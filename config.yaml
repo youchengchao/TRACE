@@ -1,0 +1,44 @@
+# TRACE configuration — all machine-specific paths and hyper-parameters live here (not in code).
+# Relative checkpoint paths resolve against the TRACE/ package root; absolute paths are used as-is.
+# The data paths can also be overridden by environment variables: TRACE_SPLIT_CSV, TRACE_DDLX_ROOT.
+
+data:
+  # CSV listing the train / validation / test split (only needed for training and evaluation).
+  # Set to your local path, or override at runtime with the TRACE_SPLIT_CSV environment variable.
+  split_csv: /path/to/DDL_X/table1_train_val_test_splits.csv
+  # Folder of DDL-X images referenced by the split CSV (override with TRACE_DDLX_ROOT).
+  ddlx_root: /path/to/DDL_X/images
+
+ckpt:
+  backbone: ckpt/backbone_best.pt   # adapted DINOv2-Large backbone weights (1.2 GB)
+  trace: ckpt/trace_best.pt         # trained LoRA + decode head (6 MB)
+
+model:
+  backbone: v2                                       # v2 = DINOv2 (the model used)
+  timm_name: vit_large_patch14_reg4_dinov2.lvd142m   # the exact timm model id
+  input: 448                                         # network input size (square)
+  out_size: 224                                      # forgery-mask output resolution
+  grid: 32                                           # backbone patch-token grid (448/14)
+  decoder_type: gatedres
+  lora_rank: 8
+  lora_targets: qkv                                  # which attention projections LoRA adapts
+  lora_blocks: "0-17"                                # transformer blocks LoRA adapts
+  lora_alpha: 16
+  cls_thr: 0.11                                      # fake if P(fake) >= this (calibrated on validation)
+
+decode:
+  cc_thr: 0.9       # forgery-probability threshold before connected-component box extraction
+  cc_min_px: 160    # drop connected components smaller than this many pixels
+
+caption:
+  model_id: Qwen/Qwen3-VL-8B-Instruct
+  # Local weight folders searched first; if none exist, model_id above is downloaded to download_to.
+  local_candidates:
+    - ckpt/Qwen3-VL-8B-Instruct
+  download_to: ckpt/Qwen3-VL-8B-Instruct
+  resize_to: 1024                  # max image side sent to the caption model
+  max_new_tokens: 512
+  tensor_parallel_size: 1
+  gpu_memory_utilization: 0.35     # fraction of total GPU memory vLLM may use (low = safe on a shared GPU)
+  max_model_len: 4096
+  max_num_seqs: 32
