@@ -125,12 +125,17 @@ Held-out DDL-X test split:
 
 Metric definitions:
 
-- Union region IoU: IoU between the union of all predicted boxes and the union of all ground-truth boxes.
-- Strict IoU: Hungarian one-to-one matching between predicted and ground-truth boxes; matched IoUs are
-  summed and divided by `max(num_predictions, num_ground_truth_boxes)`.
-- Per-GT-box IoU: for each ground-truth box, take the best IoU over all predicted boxes, then average
-  over ground-truth boxes.
-- Detection AUC: ROC-AUC of the image-level fake probability over real/fake labels.
+Let `P = {p_i}` be predicted boxes, `G = {g_j}` be ground-truth boxes, and `IoU(a,b) = |a ∩ b| / |a ∪ b|`.
+
+- Union region IoU:
+  `IoU(union(P), union(G))`.
+- Strict IoU:
+  `sum_(i,j in M) IoU(p_i, g_j) / max(|P|, |G|)`, where `M` is the Hungarian one-to-one
+  matching that maximizes total IoU.
+- Per-GT-box IoU:
+  `(1 / |G|) * sum_j max_i IoU(p_i, g_j)`.
+- Detection AUC:
+  `ROC_AUC(y, s)`, where `y` is the real/fake label and `s` is the predicted fake probability.
 
 ## Layout
 
