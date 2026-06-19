@@ -40,10 +40,14 @@ CAPTION = CFG["caption"]
 
 
 def resolve_qwen_path() -> str:
-    """Auto-scan existing project caches for the Qwen3-VL weights; fall back to the HF/modelscope
-    model id (vllm will then download it to caption.download_to). Returns a local dir or the id."""
-    for cand in CAPTION["local_candidates"]:
+    """Return a local Qwen weight dir if present; otherwise return the HF model id."""
+    for cand in [*CAPTION["local_candidates"], CAPTION["download_to"]]:
         p = _abs(cand)
         if p.exists() and any(p.glob("*.safetensors")):
             return str(p)
     return CAPTION["model_id"]
+
+
+def qwen_download_dir() -> Path:
+    """Directory where first-run Qwen downloads should be stored."""
+    return _abs(CAPTION["download_to"])

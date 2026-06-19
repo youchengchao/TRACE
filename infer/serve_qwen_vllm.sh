@@ -10,11 +10,21 @@ PORT="${2:-8000}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export UV_FROZEN=1   # uv run uses uv.lock exactly (never re-resolve to newer versions)
 
-# resolve the Qwen weights (existing project cache, else the HF/modelscope id for auto-download)
+# resolve the Qwen weights (existing project cache, else download to the configured project cache)
 MODEL="$(cd "$ROOT" && uv run python -c 'import trace_config as C; print(C.resolve_qwen_path())')"
+MODEL_ID="$(cd "$ROOT" && uv run python -c 'import trace_config as C; print(C.CAPTION["model_id"])')"
+DOWNLOAD_DIR="$(cd "$ROOT" && uv run python -c 'import trace_config as C; print(C.qwen_download_dir())')"
 MAXLEN="$(cd "$ROOT" && uv run python -c 'import trace_config as C; print(C.CAPTION["max_model_len"])')"
 GMU="$(cd "$ROOT" && uv run python -c 'import trace_config as C; print(C.CAPTION["gpu_memory_utilization"])')"
 MAXSEQ="$(cd "$ROOT" && uv run python -c 'import trace_config as C; print(C.CAPTION["max_num_seqs"])')"
+
+if [ "$MODEL" = "$MODEL_ID" ]; then
+  echo "### Qwen weights not found locally; downloading $MODEL_ID -> $DOWNLOAD_DIR"
+  mkdir -p "$DOWNLOAD_DIR"
+  (cd "$ROOT" && uv run huggingface-cli download "$MODEL_ID" --local-dir "$DOWNLOAD_DIR")
+  MODEL="$(cd "$ROOT" && uv run python -c 'import trace_config as C; print(C.resolve_qwen_path())')"
+fi
+
 echo "### Qwen model -> $MODEL (max_model_len=$MAXLEN gpu_mem_util=$GMU max_num_seqs=$MAXSEQ)"
 
 echo "### applying vLLM/Qwen env patches"

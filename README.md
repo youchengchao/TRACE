@@ -106,7 +106,8 @@ is held out from training. (To only run inference, skip training and use the shi
 ## vLLM caption server
 
 `run_submit.sh full` manages it for you; to run by hand: `bash infer/serve_qwen_vllm.sh <gpu> <port>`.
-Qwen weights auto-resolve from `config.yaml → caption.local_candidates` (else downloaded).
+Qwen weights auto-resolve from `config.yaml → caption.local_candidates` (else downloaded on first
+`full` run to `config.yaml → caption.download_to`, default `ckpt/Qwen3-VL-8B-Instruct`).
 `patch_vllm_for_qwen.py` applies two idempotent compatibility fixes the pinned vLLM/transformers need.
 Default `--enforce-eager` is robust on a shared GPU; on a dedicated GPU drop it and shard with the
 client's `--num-shards` / `--shard-id` for speed.
