@@ -11,6 +11,8 @@ TRACE predicts:
 ## Quick Start
 
 ```bash
+git clone https://github.com/youchengchao/TRACE.git
+cd TRACE
 bash setup_env.sh
 bash download_ckpt.sh
 bash run_submit.sh /path/to/test/images out/test_submit 0 full
@@ -48,10 +50,27 @@ bash run_submit.sh /path/to/test/images out/test_submit 0 loc
 
 Large downloaded weights are ignored by git.
 
+If Google Drive download is blocked on your network, download `backbone_best.pt` manually from:
+
+```text
+https://drive.google.com/file/d/1YLUzBfv0OU-vYMYC9sgb2fqF2V0GAvw6/view?usp=sharing
+```
+
+Then place it at `ckpt/backbone_best.pt`.
+
 ## Environment
 
-`setup_env.sh` installs the pinned `uv.lock` environment. Tested with Python 3.12, PyTorch 2.8
-CUDA 12.8 wheels, vLLM 0.11.0, and transformers 5.9.0. Only an NVIDIA driver is required.
+Requirements:
+
+- Linux machine with an NVIDIA GPU
+- Working NVIDIA driver (`nvidia-smi` should run)
+- `uv` installed
+- Internet access for first-time environment/model downloads
+
+`setup_env.sh` installs the pinned `uv.lock` environment. It uses PyTorch CUDA wheels, so you do not
+need to install a separate CUDA toolkit or create a conda environment.
+
+Tested with Python 3.12, PyTorch 2.8 CUDA 12.8 wheels, vLLM 0.11.0, and transformers 5.9.0.
 
 ## Training
 
@@ -97,12 +116,21 @@ Qwen3-VL-8B is loaded from `caption.local_candidates`; if missing, it is downloa
 
 Held-out DDL-X test split:
 
-| Metric | TRACE | DeCLIP | Dolos |
-|---|---:|---:|---:|
-| Union region IoU | **0.8255** | 0.7858 | 0.6640 |
-| Strict IoU | **0.7466** | 0.7063 | 0.5301 |
-| Per-GT-box IoU | **0.7249** | 0.6886 | 0.5394 |
-| Detection AUC | **1.000** | 0.8301 | 0.9806 |
+| Metric | TRACE |
+|---|---:|
+| Union region IoU | 0.8255 |
+| Strict IoU | 0.7466 |
+| Per-GT-box IoU | 0.7249 |
+| Detection AUC | 1.000 |
+
+Metric definitions:
+
+- Union region IoU: IoU between the union of all predicted boxes and the union of all ground-truth boxes.
+- Strict IoU: Hungarian one-to-one matching between predicted and ground-truth boxes; matched IoUs are
+  summed and divided by `max(num_predictions, num_ground_truth_boxes)`.
+- Per-GT-box IoU: for each ground-truth box, take the best IoU over all predicted boxes, then average
+  over ground-truth boxes.
+- Detection AUC: ROC-AUC of the image-level fake probability over real/fake labels.
 
 ## Layout
 
