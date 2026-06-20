@@ -171,3 +171,15 @@ infer/                             inference and captioning
 submit/                            validation and packaging
 ckpt/                              committed and downloaded checkpoints
 ```
+
+## Authors
+
+- Youcheng Chao ([@youchengchao](https://github.com/youchengchao))
+- hhhheep ([@hhhheep](https://github.com/hhhheep))
+
+## License
+
+This repository is released under the MIT License. See `LICENSE`.
+
+The license applies to the code in this repository. Model weights, datasets, and third-party
+dependencies remain subject to their respective licenses.
