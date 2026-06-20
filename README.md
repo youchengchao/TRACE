@@ -174,8 +174,8 @@ ckpt/                              committed and downloaded checkpoints
 
 ## Authors
 
-- Youcheng Chao ([@youchengchao](https://github.com/youchengchao))
-- hhhheep ([@hhhheep](https://github.com/hhhheep))
+- Youcheng Zhao ([@youchengchao](https://github.com/youchengchao))
+- Yifan Wang ([@hhhheep](https://github.com/hhhheep))
 
 ## License
 
